@@ -18,6 +18,7 @@ Your journal entry should contain the following (you can use Obsedian if you lik
 - Used meta.ai to interview user to find out more about their experience and persona.
 - Got assigned to and joined my github project team.
 - Forked project and set up local repository.
+- Met with team, shared ai interview transcript.
 > What work you are planning to do next week
 - Sign up for openAI API key and install project.
 - Cooperate with team.
@@ -30,7 +31,7 @@ Your journal entry should contain the following (you can use Obsedian if you lik
 Mark all that applied this week
 - [x] Attended class
 - [] Responded to PRs/Issues
-- [] Met with the team online. Forum ______
+- [x] Met with the team online. Forum: Teams chat group set up by Nathan
 - [x] Commits to group repo
 
 > :warning: If you were not able to mark any of these on a particular week, please email your lecturer with the reason.
