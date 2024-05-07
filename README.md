@@ -28,3 +28,6 @@ in the [Wiki](https://github.com/NM-TAFE/project-advanced-ui-development-team-me
 ## License
 
 This project is licensed under the [Creative Commons Zero v1.0 Universal](LICENSE) license.
+
+## Credits
+This code was first created by the 2023, S2 Advanced Programming Diploma Group at North Metro TAFE. If you would like your contribution acknowledged, please contact Rafael. 
