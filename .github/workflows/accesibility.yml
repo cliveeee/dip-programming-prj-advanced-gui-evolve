@@ -1,0 +1,50 @@
+name: Accessibility
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  accessibility:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the repository code
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flask
+          pip install -r requirements.txt
+          
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+
+      # Install accessibility-checker
+      - name: Install accessibility-checker
+        run: npm install -g accessibility-checker
+
+      - name: Serve Flask App
+        working-directory: ./app
+        run: |
+          export FLASK_APP=app.py
+          flask run -h localhost -p 5000 &
+      
+      # Run accessibility-checker
+      - name: Run accessibility-checker
+        run: |
+          sleep 10
+          achecker http://localhost:5000 
+          achecker http://localhost:5000/upload 
+          achecker http://localhost:5000/settings
