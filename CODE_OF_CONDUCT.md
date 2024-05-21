@@ -1,6 +1,6 @@
 # Code of Conduct
 
-## v1 - Drafted by Izaac Salh & Sukhwan Ko
+## v1 - Drafted by Izaac Saleh & Sukhwan Ko
 
 ## Our Pledge
 
