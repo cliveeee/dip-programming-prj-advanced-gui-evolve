@@ -1,6 +1,6 @@
 # Style Guide Draft
 
-## v1 - Drafted by Izaac Salh & Sukhwan Ko
+## v1 - Drafted by Cooper Whitehurst & Blony Maunela
 
 ## Adherence to PEP 8:
 
