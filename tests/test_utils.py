@@ -156,7 +156,7 @@ def test_get_vid_save_path_get_from_config_and_add_slash_linux(mocker):
     github test. To test locally expected_vid_download_path is the absolute path github test environment.
     To run successfully on your system need to change to your systems absolute path"""
     mocker.patch("app.utils.config",
-                return_value="/home/runner/work/dip-programming-prj-advanced-gui-evolve/out/videos")
+                    return_value="/home/runner/work/dip-programming-prj-advanced-gui-evolve/out/videos")
     expected_vid_download_path = "/home/runner/work/dip-programming-prj-advanced-gui-evolve/out/videos/"
     assert utils.get_vid_save_path() == expected_vid_download_path
 
@@ -166,7 +166,6 @@ def test_get_vid_save_path_from_config_linux(mocker):
     github test. To test locally expected_vid_download_path is the absolute path github test environment.
     To run successfully on your system need to change to your systems absolute path"""
     mocker.patch("app.utils.config",
-                return_value="/home/runner/work/dip-programming-prj-advanced-gui-evolve/out/videos/")
+                    return_value="/home/runner/work/dip-programming-prj-advanced-gui-evolve/out/videos/")
     expected_vid_download_path = "/home/runner/work/dip-programming-prj-advanced-gui-evolve/out/videos/"
     assert utils.get_vid_save_path() == expected_vid_download_path
-
