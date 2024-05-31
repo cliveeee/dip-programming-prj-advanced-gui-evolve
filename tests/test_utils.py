@@ -154,5 +154,5 @@ def test_get_vid_save_path_config_not_set_linux_automated(mocker):
     """ github automated testing
     absolute path for the testing system in github"""
     mocker.patch("app.utils.config", return_value="output_path")
-    expected_vid_download_path = "/home/runner/work/dip-programming-prj-advanced-gui-evolve/dip-programming-prj-advanced-gui-evolve"
+    expected_vid_download_path = "/home/runner/work/dip-programming-prj-advanced-gui-evolve/out/videos/"
     assert utils.get_vid_save_path()  == expected_vid_download_path
