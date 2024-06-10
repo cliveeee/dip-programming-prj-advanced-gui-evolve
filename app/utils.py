@@ -109,14 +109,14 @@ def get_vid_save_path() -> str:
     Returns output path from config variables, will set default to root of project\\out\\videos\\
     :return: file path as string
     """
+    # vid_download_path = config("UserSettings", "video_save_path")
     vid_download_path = config("UserSettings", "video_save_path")
     # Set default output path for video download path
     if vid_download_path == "output_path":
         default_path = Path.cwd().parent / "out" / "videos"
         if not default_path.exists():
             default_path.mkdir(parents=True, exist_ok=True)
-
-        return str(default_path)
+        return str(default_path) + SLASH
     # Check if the path ends with a backslash
     vid_download_path = Path(vid_download_path)
     if not vid_download_path.is_dir():
