@@ -1,3 +1,5 @@
+import types
+
 import openai
 import cv2
 import pytesseract
@@ -5,6 +7,7 @@ import logging
 from typing import Union, List, Dict
 import utils
 from utils import config
+import json
 
 
 class ExtractText:
@@ -43,6 +46,7 @@ class ExtractText:
                             'timestamp': timestamp,
                             'text': formatted_code
                         })
+                        print(formatted_code)
                     previous_text = extracted_text
                 else:
                     logging.info(f"Text at {timestamp}s is similar to the previous frame, ignoring.")
@@ -68,7 +72,7 @@ class ExtractText:
         :param text: The extracted text to check
         :return: True if keywords are found, otherwise False
         """
-        keywords = ['def', 'class', 'import', 'print', 'for', 'while', 'if', 'else', 'try', 'except']
+        keywords = ['def', 'class', 'import', 'print', 'for', 'while', 'if', 'else', 'try', 'except', 'public']
         return any(keyword in text for keyword in keywords)
 
     @staticmethod
@@ -150,13 +154,28 @@ class ExtractText:
             logging.exception(error)
             return extracted_text
 
+    @staticmethod
+    def save_to_json(data: List[Dict[str, Union[str, float]]], output_file_path: str):
+        """
+        Save the extracted code data to a JSON file.
+        :param data: The list of dictionaries containing the extracted code data
+        :param output_file_path: The file path where the JSON data will be saved
+        """
+        try:
+            with open(output_file_path, 'w') as json_file:
+                json.dump(data, json_file, indent=4)
+            logging.info(f"Extracted code data has been saved to {output_file_path}")
+        except Exception as e:
+            logging.error(f"Failed to save extracted code data to {output_file_path}: {e}")
+
+
 # test
-start_time = 0  # Start timestamp in seconds
-end_time = 15   # End timestamp in seconds
+start_time = 201  # Start timestamp in seconds
+end_time = 223    # End timestamp in seconds
 
 extractor = ExtractText()
-extracted_code_data = extractor.extract_code_in_range("video.mp4", start_time, end_time)
+extracted_code_data = extractor.extract_code_in_range("oop(1).mp4", start_time, end_time)
 
-print("Extracted Code Data:")
-for data in extracted_code_data:
-    print(f"Timestamp: {data['timestamp']}, Text: {data['text']}")
+output_file_path = "extracted_code_data.json"
+ExtractText.save_to_json(extracted_code_data, output_file_path)
+
