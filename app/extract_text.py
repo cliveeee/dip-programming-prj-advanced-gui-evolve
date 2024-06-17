@@ -1,6 +1,4 @@
-import types
-
-import openai
+import os
 import cv2
 import pytesseract
 import logging
@@ -8,17 +6,14 @@ from typing import Union, List, Dict
 import utils
 from utils import config
 import json
+import openai  # Importing openai module for openai_format_raw_ocr
 
+# Setup logging
+logging.basicConfig(level=logging.INFO)
 
 class ExtractText:
     """
     A utility class for extracting and formatting code snippets from video frames using OCR and OpenAI.
-
-    This class provides methods for extracting code from a video frame, formatting the code to match a
-    specific programming language, and utilizing the OpenAI language model for code correction.
-
-    Note:
-    This class assumes the availability of the OpenAI GPT-3.5 Turbo model and PyTesseract for OCR.
     """
 
     @staticmethod
@@ -26,8 +21,8 @@ class ExtractText:
         """
         Extract formatted code from a video file at 5-second intervals between start_time and end_time.
         :param filename: File path of the video to extract the frames from
-        :param start_time: Start time in seconds
-        :param end_time: End time in seconds
+        :param start_timestamp: Start time in seconds
+        :param end_timestamp: End time in seconds
         :return: List of dictionaries containing the timestamp and the extracted/formatted code
         """
         extracted_code_data = []
@@ -87,46 +82,31 @@ class ExtractText:
         return formatted_text
 
     @staticmethod
-    def extract_frame_at_timestamp(filename: str, timestamp: float) -> Union[cv2.VideoCapture, None]:
+    def extract_frame_at_timestamp(filename: str, timestamp: float) -> Union[None, bytes]:
         """
         Extract a frame from a video at a given timestamp
         :param filename: File path to extract frame from
         :param timestamp: Timestamp to extract the frame from
         :return: Returns capture frame or None
         """
-        cap = cv2.VideoCapture(f"{utils.get_vid_save_path()}{filename}")
+        video_file_path = os.path.join('out', 'videos', filename)
+        cap = cv2.VideoCapture(video_file_path)
         if not cap.isOpened():
-            logging.error(f"Failed to open {filename} stream")
+            logging.error(f"Failed to open {video_file_path} stream")
             return None
         cap.set(cv2.CAP_PROP_POS_MSEC, timestamp * 1000)
         ret, frame = cap.read()
         if ret:
             cap.release()
-            logging.info(f"Successfully captured frame @ {timestamp}s in file {filename}")
+            logging.info(f"Successfully captured frame @ {timestamp}s in file {video_file_path}")
             return frame
         else:
-            logging.error(f"Failed to capture frame @ {timestamp}s in file {filename}")
+            logging.error(f"Failed to capture frame @ {timestamp}s in file {video_file_path}")
             return None
 
     @staticmethod
     def openai_format_raw_ocr(extracted_text: str, language: str) -> str:
         """
-        "Given an input of potentially raw OCR capture from a video containing Python code, your task is to correct
-        and format the code. Ensure the code's indentation and syntax are accurate. Exclude any content that isn't
-        valid Python code. If no recognizable Python content is detected, return 'ERROR'. Do not provide
-        explanations, leading or trailing backticks, or specify the language in your response. Simply return the
-        corrected code. Avoid making extensive alterations; the goal is to retain the original intent of the capture
-        as closely as possible."
-
-        prompt = f"Fix up the following {language} code snippet: '{extracted_text}'" response =
-        openai.ChatCompletion.create( model="gpt-3.5-turbo", messages=[ {"role": "system", "content": "Given an input
-        of potentially raw OCR capture from a video containing code, your task is to correct and format the code.
-        Ensure the code's indentation and syntax are accurate. Exclude any content that isn't valid for the specified
-        language. If no recognizable content is detected, return 'ERROR'. Do not provide explanations, leading or
-        trailing backticks, or specify the language in your response. Simply return the corrected code. Avoid making
-        extensive alterations; the goal is to retain the original intent of the capture as closely as possible."},
-        {"role": "user", "content": prompt} ] ) return response.choices[0].message['content']
-
         Format given text using OpenAI language model API
         :param extracted_text: Raw extracted text to format
         :param language: Programming language to format the raw text as
@@ -144,8 +124,7 @@ class ExtractText:
                                 f"only code. If you are given something that is not {language} code, "
                                 "you must NOT include it in your response. If nothing is present, "
                                 "simply return 'ERROR' and nothing else. Do NOT return leading or "
-                                "trailing"
-                                "backticks and do NOT return the language before the code snippet."},
+                                "trailing backticks and do NOT return the language before the code snippet."},
                     {"role": "user", "content": prompt}
                 ]
             )
@@ -169,13 +148,19 @@ class ExtractText:
             logging.error(f"Failed to save extracted code data to {output_file_path}: {e}")
 
 
-# test
-start_time = 201  # Start timestamp in seconds
-end_time = 223    # End timestamp in seconds
+if __name__ == "__main__":
+    import sys
 
-extractor = ExtractText()
-extracted_code_data = extractor.extract_code_in_range("oop(1).mp4", start_time, end_time)
+    if len(sys.argv) != 4:
+        print("Usage: python script_name.py <video_filename> <start_time> <end_time>")
+        sys.exit(1)
 
-output_file_path = "extracted_code_data.json"
-ExtractText.save_to_json(extracted_code_data, output_file_path)
+    video_filename = sys.argv[1]
+    start_time = float(sys.argv[2])
+    end_time = float(sys.argv[3])
 
+    extractor = ExtractText()
+    extracted_code_data = extractor.extract_code_in_range(video_filename, start_time, end_time)
+
+    output_file_path = "extracted_code_data.json"
+    ExtractText.save_to_json(extracted_code_data, output_file_path)
