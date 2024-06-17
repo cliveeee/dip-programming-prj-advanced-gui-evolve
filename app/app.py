@@ -2,6 +2,9 @@ import os.path
 import logging
 import shutil
 from typing import Optional
+
+import openai.error
+
 import utils
 import web_cli
 from extract_text import ExtractText
@@ -273,11 +276,14 @@ def update_tesseract_path():
 
 
 if __name__ == "__main__":
-    host = "localhost"
-    port = 5000
-    logging.basicConfig(filename="app.log", filemode="w", level=logging.DEBUG, format="%(levelname)s - %(message)s")
-    print("[*] Starting OcrRoo Server")
-    print(f"[*] OcrRoo Server running on http://{host}:{port}/")
-    app.run(host=host, port=port)
+    try:
+        host = "localhost"
+        port = 5000
+        logging.basicConfig(filename="app.log", filemode="w", level=logging.DEBUG, format="%(levelname)s - %(message)s")
+        print("[*] Starting OcrRoo Server")
+        print(f"[*] OcrRoo Server running on http://{host}:{port}/")
+        app.run(host=host, port=port)
+    except openai.error.RateLimitError:
+        ...
 else:
     logging.basicConfig(level=logging.DEBUG, format="%(levelname)s - %(message)s")
